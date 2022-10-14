@@ -19,8 +19,9 @@ import (
 )
 
 func main() {
-	fmt.Println("dialing endpoint:", "https://testchain.metamemo.one:24180")
-	client, err := ethclient.Dial("https://testchain.metamemo.one:24180")
+	endpoint := "https://testchain.metamemo.one:24180"
+	fmt.Println("dialing endpoint:", endpoint)
+	client, err := ethclient.Dial(endpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -95,17 +96,6 @@ func main() {
 	data = append(data, paddedAmount...)
 	fmt.Printf("tx data: %x\n", data)
 
-	// get gas
-	// fmt.Println("getting gas..")
-	// gasLimit, err := client.EstimateGas(context.Background(), ethereum.CallMsg{
-	// 	To:   &tokenAddress,
-	// 	Data: data,
-	// })
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(gasLimit) // 23256
-
 	gasLimit := uint64(300000)
 
 	// construct tx with all parts
@@ -135,17 +125,7 @@ func main() {
 
 	fmt.Printf("tx sent: %s\n", signedTx.Hash().Hex()) // tx sent: 0xa56316b637a94c4cc0331c73ef26389d6c097506d581073f927275e7a6ece0bc
 
-	WaitTx("https://testchain.metamemo.one:24180", signedTx.Hash())
-
-	r := getTransactionReceipt("https://testchain.metamemo.one:24180", signedTx.Hash())
-	fmt.Println("receipt:", r)
-	fmt.Println("block number:", r.BlockNumber)
-	fmt.Println("contract addr:", r.ContractAddress)
-	fmt.Println("cumu gas used:", r.CumulativeGasUsed)
-	fmt.Println("gas used:", r.GasUsed)
-	fmt.Println("logs:", r.Logs)
-	fmt.Println("post state:", r.PostState)
-	fmt.Println("type:", r.Type)
+	WaitTx(endpoint, signedTx.Hash())
 }
 
 //GetTransactionReceipt 通过交易hash获得交易详情
